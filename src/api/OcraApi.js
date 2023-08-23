@@ -109,7 +109,7 @@ const { generateOTPFromCRCode } = require('../utils/ocra-generator');
       // );
 
       const otpCode = await generateOTPFromCRCode(challenge, pin);
-      callback(null, otpCode);
+      callback(null, { otp: otpCode });
     };
   };
 
