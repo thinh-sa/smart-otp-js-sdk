@@ -104,7 +104,7 @@ const { totpGenerator } = require('../utils/totp-generator');
         'JNJFSRSFJEZESR2BKREEWSK2KNDUESKUGZIEGWCLKFMFOUKNGJHVASSFINBVKSRSI5DEGRJWJYZTGTSCJFAQ';
       // const secretKey = await decryptSecretKeyWithPassword(pin);
       const totpCode = totpGenerator(secretKey, 30, 6);
-      return totpCode;
+      callback(null, totpCode);
     };
   };
 

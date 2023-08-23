@@ -115,7 +115,7 @@ const { encryptSecretKeyWithPassword } = require('../utils/encryptSecretKey');
           callback,
         );
         encryptSecretKeyWithPassword(newFactor?.data?.secretKey, postBody?.pin);
-        return newFactor;
+        callback(null, newFactor);
       };
     };
 
