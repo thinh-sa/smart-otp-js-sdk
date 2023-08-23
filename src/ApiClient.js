@@ -49,7 +49,8 @@
      * @type {String}
      * @default http://api.vnptpay.vn/v1
      */
-    this.basePath = 'http://api.vnptpay.vn/v1'.replace(/\/+$/, '');
+    // this.basePath = 'http://api.vnptpay.vn/v1'.replace(/\/+$/, '');
+    this.basePath = 'http://localhost:3001/v1'.replace(/\/+$/, '');
 
     /**
      * The authentication methods to be included for all API calls.
