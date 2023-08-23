@@ -14,21 +14,30 @@
  *
  */
 
-(function(root, factory) {
+const { decryptSecretKeyWithPassword } = require('../utils/decryptSecretKey');
+const { totpGenerator } = require('../utils/totp-generator');
+
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
     define(['ApiClient', 'model/InlineResponse200'], factory);
   } else if (typeof module === 'object' && module.exports) {
     // CommonJS-like environments that support module.exports, like Node.
-    module.exports = factory(require('../ApiClient'), require('../model/InlineResponse200'));
+    module.exports = factory(
+      require('../ApiClient'),
+      require('../model/InlineResponse200'),
+    );
   } else {
     // Browser globals (root is window)
     if (!root.SmartOtpSdk) {
       root.SmartOtpSdk = {};
     }
-    root.SmartOtpSdk.TotpApi = factory(root.SmartOtpSdk.ApiClient, root.SmartOtpSdk.InlineResponse200);
+    root.SmartOtpSdk.TotpApi = factory(
+      root.SmartOtpSdk.ApiClient,
+      root.SmartOtpSdk.InlineResponse200,
+    );
   }
-}(this, function(ApiClient, InlineResponse200) {
+})(this, function (ApiClient, InlineResponse200) {
   'use strict';
 
   /**
@@ -38,15 +47,14 @@
    */
 
   /**
-   * Constructs a new TotpApi. 
+   * Constructs a new TotpApi.
    * @alias module:api/TotpApi
    * @class
    * @param {module:ApiClient} [apiClient] Optional API client implementation to use,
    * default to {@link module:ApiClient#instance} if unspecified.
    */
-  var exports = function(apiClient) {
+  var exports = function (apiClient) {
     this.apiClient = apiClient || ApiClient.instance;
-
 
     /**
      * Callback function to receive the result of the getTotpCode operation.
@@ -63,39 +71,42 @@
      * @param {module:api/TotpApi~getTotpCodeCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link module:model/InlineResponse200}
      */
-    this.getTotpCode = function(pin, callback) {
+    this.getTotpCode = async function (pin, callback) {
       var postBody = null;
 
       // verify the required parameter 'pin' is set
       if (pin === undefined || pin === null) {
-        throw new Error("Missing the required parameter 'pin' when calling getTotpCode");
+        throw new Error(
+          "Missing the required parameter 'pin' when calling getTotpCode",
+        );
       }
 
-
-      var pathParams = {
-      };
+      var pathParams = {};
       var queryParams = {
-        'pin': pin,
+        pin: pin,
       };
-      var collectionQueryParams = {
-      };
-      var headerParams = {
-      };
-      var formParams = {
-      };
+      var collectionQueryParams = {};
+      var headerParams = {};
+      var formParams = {};
 
       var authNames = [];
       var contentTypes = ['application/json'];
       var accepts = ['application/json'];
       var returnType = InlineResponse200;
 
-      return this.apiClient.callApi(
-        '/get-totp-code', 'GET',
-        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, callback
-      );
-    }
+      // return this.apiClient.callApi(
+      //   '/get-totp-code', 'GET',
+      //   pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
+      //   authNames, contentTypes, accepts, returnType, callback
+      // );
+
+      const secretKey =
+        'JNJFSRSFJEZESR2BKREEWSK2KNDUESKUGZIEGWCLKFMFOUKNGJHVASSFINBVKSRSI5DEGRJWJYZTGTSCJFAQ';
+      // const secretKey = await decryptSecretKeyWithPassword(pin);
+      const totpCode = totpGenerator(secretKey, 30, 6);
+      return totpCode;
+    };
   };
 
   return exports;
-}));
+});

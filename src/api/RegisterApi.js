@@ -14,87 +14,111 @@
  *
  */
 
-(function(root, factory) {
+const { encryptSecretKeyWithPassword } = require('../utils/encryptSecretKey');
+
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define(['ApiClient', 'model/RegisterOtpRequestModel', 'model/RegisterOtpResponseModel'], factory);
+    define([
+      'ApiClient',
+      'model/RegisterOtpRequestModel',
+      'model/RegisterOtpResponseModel',
+    ], factory);
   } else if (typeof module === 'object' && module.exports) {
     // CommonJS-like environments that support module.exports, like Node.
-    module.exports = factory(require('../ApiClient'), require('../model/RegisterOtpRequestModel'), require('../model/RegisterOtpResponseModel'));
+    module.exports = factory(
+      require('../ApiClient'),
+      require('../model/RegisterOtpRequestModel'),
+      require('../model/RegisterOtpResponseModel'),
+    );
   } else {
     // Browser globals (root is window)
     if (!root.SmartOtpSdk) {
       root.SmartOtpSdk = {};
     }
-    root.SmartOtpSdk.RegisterApi = factory(root.SmartOtpSdk.ApiClient, root.SmartOtpSdk.RegisterOtpRequestModel, root.SmartOtpSdk.RegisterOtpResponseModel);
+    root.SmartOtpSdk.RegisterApi = factory(
+      root.SmartOtpSdk.ApiClient,
+      root.SmartOtpSdk.RegisterOtpRequestModel,
+      root.SmartOtpSdk.RegisterOtpResponseModel,
+    );
   }
-}(this, function(ApiClient, RegisterOtpRequestModel, RegisterOtpResponseModel) {
-  'use strict';
-
-  /**
-   * Register service.
-   * @module api/RegisterApi
-   * @version 1.0.0
-   */
-
-  /**
-   * Constructs a new RegisterApi. 
-   * @alias module:api/RegisterApi
-   * @class
-   * @param {module:ApiClient} [apiClient] Optional API client implementation to use,
-   * default to {@link module:ApiClient#instance} if unspecified.
-   */
-  var exports = function(apiClient) {
-    this.apiClient = apiClient || ApiClient.instance;
-
+})(
+  this,
+  function (ApiClient, RegisterOtpRequestModel, RegisterOtpResponseModel) {
+    'use strict';
 
     /**
-     * Callback function to receive the result of the registerSmartOtp operation.
-     * @callback module:api/RegisterApi~registerSmartOtpCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/RegisterOtpResponseModel} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Register service.
+     * @module api/RegisterApi
+     * @version 1.0.0
      */
 
     /**
-     * Register SmartOTP on a device
-     * Send Post data to SmartOTP Server
-     * @param {module:model/RegisterOtpRequestModel} body 
-     * @param {module:api/RegisterApi~registerSmartOtpCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/RegisterOtpResponseModel}
+     * Constructs a new RegisterApi.
+     * @alias module:api/RegisterApi
+     * @class
+     * @param {module:ApiClient} [apiClient] Optional API client implementation to use,
+     * default to {@link module:ApiClient#instance} if unspecified.
      */
-    this.registerSmartOtp = function(body, callback) {
-      var postBody = body;
+    var exports = function (apiClient) {
+      this.apiClient = apiClient || ApiClient.instance;
 
-      // verify the required parameter 'body' is set
-      if (body === undefined || body === null) {
-        throw new Error("Missing the required parameter 'body' when calling registerSmartOtp");
-      }
+      /**
+       * Callback function to receive the result of the registerSmartOtp operation.
+       * @callback module:api/RegisterApi~registerSmartOtpCallback
+       * @param {String} error Error message, if any.
+       * @param {module:model/RegisterOtpResponseModel} data The data returned by the service call.
+       * @param {String} response The complete HTTP response.
+       */
 
+      /**
+       * Register SmartOTP on a device
+       * Send Post data to SmartOTP Server
+       * @param {module:model/RegisterOtpRequestModel} body
+       * @param {module:api/RegisterApi~registerSmartOtpCallback} callback The callback function, accepting three arguments: error, data, response
+       * data is of type: {@link module:model/RegisterOtpResponseModel}
+       */
+      this.registerSmartOtp = async function (body, callback) {
+        var postBody = body;
 
-      var pathParams = {
+        // verify the required parameter 'body' is set
+        if (body === undefined || body === null) {
+          throw new Error(
+            "Missing the required parameter 'body' when calling registerSmartOtp",
+          );
+        }
+
+        var pathParams = {};
+        var queryParams = {};
+        var collectionQueryParams = {};
+        var headerParams = {};
+        var formParams = {};
+
+        var authNames = [];
+        var contentTypes = ['application/json'];
+        var accepts = ['application/json'];
+        var returnType = RegisterOtpResponseModel;
+
+        const newFactor = await this.apiClient.callApi(
+          '/register-smart-otp',
+          'POST',
+          pathParams,
+          queryParams,
+          collectionQueryParams,
+          headerParams,
+          formParams,
+          postBody,
+          authNames,
+          contentTypes,
+          accepts,
+          returnType,
+          callback,
+        );
+        encryptSecretKeyWithPassword(newFactor?.data?.secretKey, postBody?.pin);
+        return newFactor;
       };
-      var queryParams = {
-      };
-      var collectionQueryParams = {
-      };
-      var headerParams = {
-      };
-      var formParams = {
-      };
+    };
 
-      var authNames = [];
-      var contentTypes = ['application/json'];
-      var accepts = ['application/json'];
-      var returnType = RegisterOtpResponseModel;
-
-      return this.apiClient.callApi(
-        '/register-smart-otp', 'POST',
-        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, callback
-      );
-    }
-  };
-
-  return exports;
-}));
+    return exports;
+  },
+);

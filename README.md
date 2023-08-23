@@ -25,7 +25,7 @@ npm install smart_otp_sdk --save
 
 ##### Local development
 
-To use the library locally without publishing to a remote npm registry, first install the dependencies by changing 
+To use the library locally without publishing to a remote npm registry, first install the dependencies by changing
 into the directory containing `package.json` (and this README). Let's call this `JAVASCRIPT_CLIENT_DIR`. Then run:
 
 ```shell
@@ -44,11 +44,13 @@ Finally, switch to the directory you want to use your smart_otp_sdk from, and ru
 npm link /path/to/<JAVASCRIPT_CLIENT_DIR>
 ```
 
-You should now be able to `require('smart_otp_sdk')` in javascript files from the directory you ran the last 
+You should now be able to `require('smart_otp_sdk')` in javascript files from the directory you ran the last
 command above from.
 
 #### git
+
 #
+
 If the library is hosted at a git repository, e.g.
 https://github.com/YOUR_USERNAME/smart_otp_sdk
 then install it via:
@@ -61,14 +63,14 @@ then install it via:
 
 The library also works in the browser environment via npm and [browserify](http://browserify.org/). After following
 the above steps with Node.js and installing browserify with `npm install -g browserify`,
-perform the following (assuming *main.js* is your entry file, that's to say your javascript file where you actually 
+perform the following (assuming _main.js_ is your entry file, that's to say your javascript file where you actually
 use this library):
 
 ```shell
 browserify main.js > bundle.js
 ```
 
-Then include *bundle.js* in the HTML pages.
+Then include _bundle.js_ in the HTML pages.
 
 ### Webpack Configuration
 
@@ -81,10 +83,10 @@ module: {
   rules: [
     {
       parser: {
-        amd: false
-      }
-    }
-  ]
+        amd: false,
+      },
+    },
+  ];
 }
 ```
 
@@ -92,17 +94,59 @@ module: {
 
 Please follow the [installation](#installation) instruction and execute the following JS code:
 
+### POST /register-smart-otp
+
+```javascript
+const registerApi = new SmartOtpSdk.RegisterApi();
+
+var registerBody = new SmartOtpSdk.RegisterOtpRequestModel();
+registerBody.activationCode = 'MK2ZKQ';
+registerBody.transId = 22;
+registerBody.pin = '1234';
+
+var callback = function (error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log(
+      'API called successfully. Returned data: ' + JSON.stringify(data),
+    );
+  }
+};
+registerApi.registerSmartOtp(registerBody, callback);
+```
+
+### GET /get-totp-code
+
 ```javascript
 var SmartOtpSdk = require('smart_otp_sdk');
 
-var api = new SmartOtpSdk.OcraApi()
+var totpApi = new SmartOtpSdk.TotpApi();
 
-var pin = "pin_example"; // {String} PIN of user set for token
+var pin = '1234'; // {String} PIN of user set for token
 
-var challenge = "challenge_example"; // {String} challenge code
+var callback = function (error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('totpApi called successfully. Returned data: ' + data);
+  }
+};
+totpApi.getTotpCode(pin, callback);
+```
 
+### GET /get-ocra-otp
 
-var callback = function(error, data, response) {
+```javascript
+var SmartOtpSdk = require('smart_otp_sdk');
+
+var api = new SmartOtpSdk.OcraApi();
+
+var pin = 'pin_example'; // {String} PIN of user set for token
+
+var challenge = 'challenge_example'; // {String} challenge code
+
+var callback = function (error, data, response) {
   if (error) {
     console.error(error);
   } else {
@@ -110,30 +154,26 @@ var callback = function(error, data, response) {
   }
 };
 api.generateOtpOcra(pin, challenge, callback);
-
 ```
 
 ## Documentation for API Endpoints
 
 All URIs are relative to *http://api.vnptpay.vn/v1*
 
-Class | Method | HTTP request | Description
------------- | ------------- | ------------- | -------------
-*SmartOtpSdk.OcraApi* | [**generateOtpOcra**](docs/OcraApi.md#generateOtpOcra) | **GET** /get-ocra-otp | Get user OTP code on SDK
-*SmartOtpSdk.RegisterApi* | [**registerSmartOtp**](docs/RegisterApi.md#registerSmartOtp) | **POST** /register-smart-otp | Register SmartOTP on a device
-*SmartOtpSdk.TotpApi* | [**getTotpCode**](docs/TotpApi.md#getTotpCode) | **GET** /get-totp-code | Get user OTP code on SDK
-
+| Class                     | Method                                                       | HTTP request                 | Description                   |
+| ------------------------- | ------------------------------------------------------------ | ---------------------------- | ----------------------------- |
+| _SmartOtpSdk.OcraApi_     | [**generateOtpOcra**](docs/OcraApi.md#generateOtpOcra)       | **GET** /get-ocra-otp        | Get user OTP code on SDK      |
+| _SmartOtpSdk.RegisterApi_ | [**registerSmartOtp**](docs/RegisterApi.md#registerSmartOtp) | **POST** /register-smart-otp | Register SmartOTP on a device |
+| _SmartOtpSdk.TotpApi_     | [**getTotpCode**](docs/TotpApi.md#getTotpCode)               | **GET** /get-totp-code       | Get user OTP code on SDK      |
 
 ## Documentation for Models
 
- - [SmartOtpSdk.InlineResponse200](docs/InlineResponse200.md)
- - [SmartOtpSdk.InlineResponse200Data](docs/InlineResponse200Data.md)
- - [SmartOtpSdk.RegisterOtpRequestModel](docs/RegisterOtpRequestModel.md)
- - [SmartOtpSdk.RegisterOtpResponseModel](docs/RegisterOtpResponseModel.md)
- - [SmartOtpSdk.RegisterOtpResponseModelData](docs/RegisterOtpResponseModelData.md)
-
+- [SmartOtpSdk.InlineResponse200](docs/InlineResponse200.md)
+- [SmartOtpSdk.InlineResponse200Data](docs/InlineResponse200Data.md)
+- [SmartOtpSdk.RegisterOtpRequestModel](docs/RegisterOtpRequestModel.md)
+- [SmartOtpSdk.RegisterOtpResponseModel](docs/RegisterOtpResponseModel.md)
+- [SmartOtpSdk.RegisterOtpResponseModelData](docs/RegisterOtpResponseModelData.md)
 
 ## Documentation for Authorization
 
- All endpoints do not require authorization.
-
+All endpoints do not require authorization.
