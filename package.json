@@ -1,7 +1,8 @@
 {
-  "name": "smart_otp_sdk",
+  "name": "smart-otp-sdk",
   "version": "1.0.0",
-  "description": "SmartOTP_API_Specs_for_Payment",
+  "author": "Thinh Nguyen <phuthinh.vnpt@gmail.com>",
+  "description": "SmartOTP SDK for Web",
   "license": "Apache 2.0",
   "main": "src/index.js",
   "scripts": {
@@ -21,5 +22,6 @@
   },
   "engines": {
     "node": "18.16.1"
-  }
+  },
+  "homepage": "https://github.com/thinh-sa/smart-otp-js-sdk"
 }
